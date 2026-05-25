@@ -1,0 +1,540 @@
+---
+title: "Conversational Elicitation of Patient Utilities Using Large Language Model Simulation"
+author: "Robert Horton and Joseph Rickert"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+  pdf:
+    toc: true
+    number-sections: true
+editor: source
+execute:
+  echo: false
+---
+
+# Executive Summary
+
+This proposal describes a research and software-development initiative to investigate **conversational elicitation** as a method for estimating patient utilities and treatment preferences.
+
+Traditional utility elicitation methods such as:
+
+- standard gamble,
+- time tradeoff,
+- visual analog scales,
+- discrete choice experiments, and
+- swing weighting
+
+often impose substantial cognitive burden on patients and may fail to capture the lived experience of disease and treatment side effects.
+
+This project proposes an alternative approach based on:
+
+1. open-ended conversational interviews,
+2. large language model (LLM) simulation of synthetic patients,
+3. inference of latent patient utility structures from narrative responses, and
+4. round-trip simulation experiments evaluating recovery accuracy.
+
+The initial disease domain will be **oral squamous cell carcinoma (OSCC)**, chosen because treatment side effects strongly affect speech, eating, social interaction, appearance, fatigue, and identity — domains that naturally emerge in conversational narratives.
+
+The proposed system will:
+
+- simulate synthetic patients from latent utility profiles,
+- generate realistic interview responses,
+- infer utilities from conversational transcripts,
+- compare inferred utilities to known ground truth values, and
+- evaluate the information value of different interview strategies.
+
+The project will be implemented as an open-source, GitHub-hosted, API-free, browser-based research platform using GitHub Pages, client-side JavaScript, JSON-based experiment schemas, Quarto documentation, and human-mediated LLM interaction via copy/paste prompts.
+
+# Background and Motivation
+
+## Limitations of Conventional Utility Elicitation
+
+Health preference elicitation methods frequently rely on abstract numerical or probabilistic reasoning tasks. While these methods are theoretically grounded, many patients find them cognitively difficult, emotionally unnatural, detached from lived experience, and difficult to interpret.
+
+For example:
+
+- Standard gamble requires reasoning about mortality probabilities.
+- Time tradeoff requires hypothetical sacrifice of lifespan.
+- Visual analog scales compress complex experiences into a single number.
+- Multi-attribute utility methods may require explicit ranking of unfamiliar concepts.
+
+These approaches may inadequately capture: identity disruption, social isolation, embarrassment, loss of meaningful activities, adaptation over time, and emotional salience of functional impairments.
+
+## Narrative Expression as Preference Evidence
+
+Patients are generally much more comfortable describing:
+
+- daily routines,
+- frustrations,
+- losses,
+- fears,
+- coping strategies,
+- social experiences,
+- changes in identity,
+- disruptions to meaningful activities.
+
+The central hypothesis of this project is:
+
+> Patient utilities can be inferred from conversational narratives describing lived experience.
+
+Rather than directly asking patients to numerically value health states, conversational elicitation attempts to infer latent preferences from:
+
+- spontaneous topic salience,
+- emotional framing,
+- descriptions of daily functioning,
+- tradeoff language,
+- behavioral adaptations,
+- social and emotional consequences.
+
+# Research Objectives
+
+The primary objectives of the project are:
+
+1. Develop a simulation environment for conversational utility elicitation.
+2. Evaluate the recoverability of latent utility values from conversational transcripts.
+3. Compare alternative elicitation question sets.
+4. Investigate adaptive interviewing strategies.
+5. Identify which utility domains are most recoverable conversationally.
+6. Build an open-source benchmark platform for future research.
+
+# Oral Squamous Cell Carcinoma (OSCC) as the Initial Domain
+
+## Rationale for Selecting OSCC
+
+OSCC is particularly suitable for conversational elicitation because treatment side effects strongly affect:
+
+- speech,
+- swallowing,
+- eating,
+- facial appearance,
+- fatigue,
+- social interaction,
+- employment,
+- intimacy,
+- self-image.
+
+These impacts naturally emerge in open-ended conversation.
+
+For example:
+
+- dysphagia may manifest as avoidance of restaurants,
+- xerostomia may appear as descriptions of carrying water constantly,
+- speech impairment may affect phone use or work,
+- disfigurement may affect social participation and self-esteem.
+
+## Relationship to Existing OSCC Utility Models
+
+This project will extend existing OSCC patient utility models by introducing:
+
+- narrative simulation,
+- conversational analysis,
+- latent utility inference,
+- round-trip recovery evaluation.
+
+The project will incorporate:
+
+- clinical states,
+- symptom severity,
+- treatment side effects,
+- functional impairments,
+- latent preference weights,
+- adaptation behaviors,
+- conversational response generation.
+
+# Conceptual Framework
+
+## Latent Utility Structure
+
+Each synthetic patient will possess a latent utility vector describing the relative importance of health domains.
+
+Example domains include:
+
+| Domain | Description |
+|---|---|
+| Speech function | Importance of verbal communication |
+| Eating ability | Importance of unrestricted eating |
+| Social participation | Importance of social engagement |
+| Appearance | Sensitivity to facial disfigurement |
+| Fatigue burden | Impact of reduced energy |
+| Independence | Importance of self-sufficiency |
+| Pain burden | Sensitivity to chronic pain |
+| Employment role | Importance of work function |
+| Family role | Importance of caregiving/social role |
+
+## Multi-Layer Patient Representation
+
+The project distinguishes several conceptually distinct layers.
+
+| Layer | Description |
+|---|---|
+| Clinical state | Objective disease/treatment status |
+| Functional effects | Observable daily-life consequences |
+| Utility structure | Latent patient priorities |
+| Adaptation style | Psychological coping and normalization |
+| Narrative expression | Conversational responses |
+
+# System Architecture
+
+## High-Level Architecture
+
+```{mermaid}
+%%| fig-cap: High-level conversational elicitation architecture
+
+flowchart LR
+
+A[Latent Utility Vector]
+B[Clinical State]
+C[Adaptation Style]
+D[Functional Life Effects]
+
+A --> D
+B --> D
+C --> D
+
+D --> E[LLM Patient Simulator]
+
+E --> F[Conversational Transcript]
+
+F --> G[Utility Inference Engine]
+
+G --> H[Recovered Utility Vector]
+
+A --> I[Ground Truth Comparison]
+
+H --> I
+
+I --> J[Performance Metrics]
+```
+
+# Round-Trip Simulation Framework
+
+## Overview
+
+The project is built around a round-trip simulation process:
+
+1. Generate latent utility profile.
+2. Generate synthetic patient conversation.
+3. Infer utilities from transcript.
+4. Compare inferred and true utilities.
+
+## Round-Trip Workflow
+
+```{mermaid}
+%%| fig-cap: Round-trip simulation workflow
+
+flowchart TD
+
+A[Generate Synthetic Patient]
+--> B[Assign Clinical State]
+
+B --> C[Assign Utility Weights]
+
+C --> D[Generate Interview Prompt]
+
+D --> E[LLM Generates Patient Responses]
+
+E --> F[Transcript Stored]
+
+F --> G[Inference Prompt Generated]
+
+G --> H[LLM or Statistical Model Infers Utilities]
+
+H --> I[Compare to Ground Truth]
+
+I --> J[Compute Metrics]
+
+J --> K[Evaluate Question Set]
+```
+
+# Conversational Elicitation Strategy
+
+## Open-Ended Narrative Prompts
+
+Examples:
+- "Tell me about your life."
+- "What does a normal day look like?"
+- "What has changed since treatment?"
+- "What activities are most difficult now?"
+
+These prompts encourage spontaneous emergence of:
+- salience,
+- identity disruption,
+- behavioral adaptation,
+- emotional priorities.
+
+## Functional Probes
+
+Examples:
+- "What tasks take longer now?"
+- "How has eating changed?"
+- "How has treatment affected social interactions?"
+
+These target specific functional domains.
+
+## Tradeoff-Oriented Prompts
+
+Examples:
+- "If one aspect of your health improved, what would matter most?"
+- "What loss has been hardest to adapt to?"
+
+These may reveal relative utility weights more directly.
+
+# Adaptive Interviewing
+
+The proposed framework supports adaptive conversational interviewing.
+
+After each response:
+1. the system estimates uncertainty in latent utilities,
+2. identifies poorly constrained domains,
+3. selects follow-up questions maximizing expected information gain.
+
+## Adaptive Interview Concept
+
+```{mermaid}
+%%| fig-cap: Adaptive interviewing loop
+flowchart LR
+
+A[Current Transcript]
+--> B[Posterior Utility Estimate]
+
+B --> C[Uncertainty Analysis]
+
+C --> D[Question Selection]
+
+D --> E[Next Interview Question]
+
+E --> F[Patient Response]
+
+F --> A
+```
+
+# Technical Architecture
+
+## Design Principles
+
+The system will be:
+- open-source,
+- browser-based,
+- API-independent,
+- reproducible,
+- transparent,
+- low-cost,
+- forkable by researchers.
+
+## GitHub-Based Deployment
+
+The project will be hosted on GitHub and deployed using GitHub Pages.
+
+The application will:
+- run entirely client-side,
+- use static assets,
+- avoid server infrastructure,
+- avoid dependency on commercial APIs.
+
+## Human-Mediated LLM Interaction
+
+Rather than using direct API calls:
+- prompts will be generated in-browser,
+- users will copy prompts into external LLM systems,
+- users will paste generated outputs back into the application.
+
+Advantages include:
+- zero infrastructure cost,
+- model flexibility,
+- reproducibility,
+- transparency,
+- compatibility with local models,
+- avoidance of vendor lock-in.
+
+# Software Components
+
+## Proposed Repository Structure
+
+```text
+conversational-elicitation/
+├── index.html
+├── data/
+│   ├── oscc_attributes.json
+│   ├── question_sets.json
+│   ├── synthetic_patients.json
+│   └── prompt_templates.json
+├── js/
+│   ├── app.js
+│   ├── patient_generator.js
+│   ├── prompt_builder.js
+│   ├── transcript_parser.js
+│   ├── utility_inference.js
+│   ├── metrics.js
+│   └── visualization.js
+├── examples/
+├── docs/
+└── schema/
+```
+
+# Data Model
+
+## Example Experiment Object
+
+```json
+{
+  "experiment_id": "oscc_rt_001",
+  "clinical_state": {
+    "xerostomia": 0.8,
+    "dysphagia": 0.6,
+    "speech_impairment": 0.7
+  },
+  "utility_weights": {
+    "social_function": 0.9,
+    "appearance": 0.4,
+    "independence": 0.8
+  },
+  "adaptation_style": {
+    "stoicism": 0.7
+  },
+  "question_set": [],
+  "transcript": "",
+  "inferred_utilities": {},
+  "metrics": {}
+}
+```
+
+# Utility Inference Approaches
+
+## LLM-Based Inference
+
+An LLM may be prompted to:
+- identify salient themes,
+- estimate latent utility weights,
+- summarize burdens,
+- identify tradeoffs.
+
+This provides a rapid baseline approach.
+
+## Embedding-Based Regression
+
+Potential future methods:
+- transformer embeddings,
+- Bayesian regression,
+- Gaussian processes,
+- metric learning,
+- latent variable models.
+
+## Bayesian Inference Models
+
+Longer-term development may incorporate:
+- probabilistic graphical models,
+- posterior uncertainty estimation,
+- latent narrative-generation models,
+- active learning strategies.
+
+# Evaluation Metrics
+
+## Recovery Accuracy
+
+Potential metrics include:
+- root mean squared error,
+- rank correlation,
+- calibration error,
+- posterior entropy,
+- confidence interval coverage.
+
+## Identifiability Analysis
+
+The project will investigate:
+- which utility dimensions are recoverable,
+- which require direct probing,
+- ambiguity between utility domains,
+- information value of interview questions.
+
+# Ethical Considerations
+
+## Synthetic Patients vs Real Patients
+
+Initial development will rely exclusively on synthetic patients.
+
+No clinical deployment is proposed in the initial phase.
+
+## Risks
+
+Potential risks include:
+- demographic stereotyping,
+- over-interpretation of narratives,
+- privacy concerns,
+- inappropriate automation of preference assessment.
+
+## Human Oversight
+
+Conversational elicitation should be viewed as decision support, exploratory preference assessment, and augmentation of clinician understanding, not a replacement for clinical judgment.
+
+# Proposed Development Phases
+
+## Phase 1 — MVP Prototype
+
+Features:
+
+- OSCC utility schema,
+- synthetic patient generation,
+- transcript storage,
+- prompt generation,
+- utility comparison dashboard.
+
+## Phase 2 — Expanded Simulation
+
+Features:
+
+- multiple patient archetypes,
+- adaptation styles,
+- larger question libraries,
+- batch simulation.
+
+## Phase 3 — Adaptive Interviewing
+
+Features:
+
+- uncertainty estimation,
+- active question selection,
+- posterior updating.
+
+## Phase 4 — Real-World Validation
+
+Potential future activities:
+
+- pilot clinician studies,
+- comparison against standard utility instruments,
+- qualitative usability studies.
+
+# Expected Contributions
+
+This project may contribute:
+
+- a new framework for conversational utility elicitation,
+- a benchmark environment for preference inference,
+- synthetic patient corpora,
+- adaptive interviewing methodologies,
+- narrative-based utility modeling approaches,
+- open-source research infrastructure.
+
+# Conclusion
+
+This proposal describes a novel framework for estimating patient utilities through conversational narratives rather than direct numerical elicitation.
+
+The central innovation is a round-trip simulation architecture in which:
+
+- latent utilities generate synthetic patient narratives,
+- conversational transcripts are analyzed to recover utilities,
+- recovery accuracy is quantitatively evaluated.
+
+The project combines:
+
+- health preference research,
+- narrative medicine,
+- probabilistic inference,
+- conversational AI,
+- simulation-based evaluation,
+- open-source software engineering.
+
+The proposed GitHub-hosted, API-free architecture emphasizes transparency, reproducibility, accessibility, extensibility, and collaborative experimentation.
+
+OSCC provides a clinically meaningful and conversationally rich initial domain for evaluating whether conversational elicitation can recover latent patient preferences with sufficient fidelity to support future healthcare decision-making research.
